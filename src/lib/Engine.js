@@ -221,7 +221,6 @@ function initTonalBoxes() {
     object.castShadow = true;
     object.receiveShadow = true;
 
-    ensureInsideBoundingBox(object)
     scene.add(object);
     tonalBoxes.push(object);
   }
@@ -307,10 +306,10 @@ function detectTonalBoxesIntersection() {
 function randomizeTonalBoxesPosition() {
   for (let i = 0; i < tonalBoxes.length; i++) {
     tonalBoxes[i].position.x = Math.floor(Math.random() * 1000) - 500;
-    tonalBoxes[i].position.y = Math.floor(Math.random() * 500);
+    tonalBoxes[i].position.y = Math.floor(Math.random() * 1000);
     tonalBoxes[i].position.z = Math.floor(Math.random() * 1000) - 500;
+    ensureInsideBoundingBox(tonalBoxes[i])
   }
-
 }
 
 function animate() {
