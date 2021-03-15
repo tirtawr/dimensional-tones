@@ -4,6 +4,7 @@ import { DragControls } from './DragControls'
 import { OrbitControls } from './OrbitControls'
 import anime from 'animejs/lib/anime.es.js';
 import * as Tone from 'tone'
+import { timeline } from 'animejs';
 
 
 let container;
@@ -11,7 +12,7 @@ let camera, scene, renderer;
 let orbitControls, dragControls;
 const tonalBoxes = [];
 let xPlane, yPlane, zPlane;
-let alternatingTimeline, concurrentTimeline;
+let alternatingTimeline, concurrentTimeline, xAxisTimeline, yAxisTimeline, zAxisTimeline;
 let planePosition = {
   xPlane: -500,
   zPlane: -500,
@@ -39,6 +40,7 @@ function init() {
   initGridHelper()
   initPlaybackPlanes()
   initAlternatingTimeline()
+  initAxisTimelines()
   initConcurrentTimeline()
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -90,6 +92,50 @@ function initTonalBoxesForPlayback() {
     tonalBoxes[i].material = tonalBoxes[i].offMaterial;
     tonalBoxes[i].isOn = false;    
   }
+}
+
+function initAxisTimelines() {
+  xAxisTimeline = anime.timeline({
+    autoplay: false,
+    loop: true,
+    easing: 'linear',
+    update: onTimelineUpdate
+  });
+  xAxisTimeline.add({
+    targets: planePosition,
+    xPlane: 500,
+    duration: fullLoopDuration / 3,
+    changeBegin: function (_anim) { xPlane.visible = true; },
+    changeComplete: function (_anim) { xPlane.visible = false; },
+  })
+
+  yAxisTimeline = anime.timeline({
+    autoplay: false,
+    loop: true,
+    easing: 'linear',
+    update: onTimelineUpdate
+  });
+  yAxisTimeline.add({
+    targets: planePosition,
+    yPlane: 1000,
+    duration: fullLoopDuration / 3,
+    changeBegin: function (_anim) { yPlane.visible = true; },
+    changeComplete: function (_anim) { yPlane.visible = false; },
+  })
+
+  zAxisTimeline = anime.timeline({
+    autoplay: false,
+    loop: true,
+    easing: 'linear',
+    update: onTimelineUpdate
+  });
+  zAxisTimeline.add({
+    targets: planePosition,
+    zPlane: 500,
+    duration: fullLoopDuration / 3,
+    changeBegin: function (_anim) { zPlane.visible = true; },
+    changeComplete: function (_anim) { zPlane.visible = false; },
+  })
 }
 
 function initAlternatingTimeline() {
@@ -160,11 +206,28 @@ function playConcurrent() {
   concurrentTimeline.play()
 }
 
+function playXAxis() {
+  initTonalBoxesForPlayback()
+  xAxisTimeline.play()
+}
+
+function playYAxis() {
+  initTonalBoxesForPlayback()
+  yAxisTimeline.play()
+}
+
+function playZAxis() {
+  initTonalBoxesForPlayback()
+  zAxisTimeline.play()
+}
+
 function resetPlayback() {
-  alternatingTimeline.pause()
-  alternatingTimeline.seek(alternatingTimeline.duration * 0)
-  concurrentTimeline.pause()
-  concurrentTimeline.seek(concurrentTimeline.duration * 0)
+  [
+    alternatingTimeline, concurrentTimeline, xAxisTimeline, yAxisTimeline, zAxisTimeline
+  ].forEach((timeline) => {
+    timeline.pause()
+    timeline.seek(timeline.duration * 0)
+  })
   for (let i = 0; i < tonalBoxes.length; i++) {
     tonalBoxes[i].material = tonalBoxes[i].onMaterial;
   }
@@ -325,6 +388,8 @@ function onWindowResize() {
 
 }
 
-const exports = { init, animate, playAlternating, playConcurrent, resetPlayback, randomizeTonalBoxesPosition }
+const exports = {
+  init, animate, playAlternating, playConcurrent, resetPlayback, randomizeTonalBoxesPosition, playXAxis, playZAxis, playYAxis
+}
 
 export default exports;

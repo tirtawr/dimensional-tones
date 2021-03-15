@@ -7,7 +7,7 @@ import Engine from './lib/Engine'
 
 function App() {
 
-  const [playbackStatus, setPlaybackStatus] = useState('stopped');
+  const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
     Engine.init()
@@ -15,19 +15,37 @@ function App() {
   }, []);
 
   const onPlayConcurrent = () => {
-    if (playbackStatus !== 'stopped') Engine.resetPlayback()
-    setPlaybackStatus('concurrent');
+    if (isPlaying) Engine.resetPlayback()
+    setIsPlaying(true);
     Engine.playConcurrent()
   }
 
   const onPlayAlternating = () => {
-    if (playbackStatus !== 'stopped') Engine.resetPlayback()
-    setPlaybackStatus('alternating');
+    if (isPlaying) Engine.resetPlayback()
+    setIsPlaying(true);
     Engine.playAlternating();
   }
 
+  const onPlayXAxis = () => {
+    if (isPlaying) Engine.resetPlayback()
+    setIsPlaying(true);
+    Engine.playXAxis();
+  }
+
+  const onPlayYAxis = () => {
+    if (isPlaying) Engine.resetPlayback()
+    setIsPlaying(true);
+    Engine.playYAxis();
+  }
+
+  const onPlayZAxis = () => {
+    if (isPlaying) Engine.resetPlayback()
+    setIsPlaying(true);
+    Engine.playZAxis();
+  }
+
   const onStop = () => {
-    setPlaybackStatus('stopped');
+    setIsPlaying(false);
     Engine.resetPlayback()
   }
 
@@ -39,7 +57,9 @@ function App() {
     <div id="info">
       Move objects around with your mouse by dragging them around the screen.<br />
 			Use mouse and scroll wheel to move the camera around.<br/>
-      <a onClick={onPlayConcurrent}>Play Together</a> . <a onClick={onPlayAlternating}>Play Alternating</a> . <a onClick={onStop}>Stop</a><br/>
+      <a onClick={onPlayConcurrent}>Play Together</a> . <a onClick={onPlayAlternating}>Play Alternating</a><br />
+      <a onClick={onPlayXAxis}>Play on X Axis</a> . <a onClick={onPlayYAxis}>Play on Y Axis</a> . <a onClick={onPlayZAxis}>Play on Z Axis</a><br />
+      <a onClick={onStop}>Stop</a><br/>
       <a onClick={onRandomizeTonalBoxesPosition}>Randomize Position</a>
     </div>
   );
